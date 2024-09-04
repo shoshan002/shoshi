@@ -25,16 +25,23 @@ var siriWave = new SiriWave({
 
 
   //siri message animation
-  $('.siri-message').textillate({
-    loop: true,
-    sync: true,
-    in: {
-        effect: "fadeInUp",
+  $(document).ready(function () {
+    $('.siri message').textillate({
+        loop: true,
         sync: true,
-    },
-    out: {
-        effect: "fadeOutUp",
-        sync: true,
-    },
-
+        in: {
+            effect: "fadInUp",
+            sync: true
+        },
+        out: {
+            effect: "fadInUp",
+            sync: true
+        }
+    });
+    // mic button click event
+    $("#MicBtn").click(function () { 
+        eel.playAssistantSound()
+        $("#Oval").attr("hidden", true);
+        $("#SiriWave").attr("hidden", false);
+    });
 });
