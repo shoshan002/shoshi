@@ -44,9 +44,10 @@ cursor.execute(query)
 # con.commit()
 # con.close()
 
-# query = "INSERT INTO contact1 VALUES (null,'vikram', '8310321890', 'null')"
+# query = "INSERT INTO contact1 VALUES (null,'dad', '8277717977', 'null')"
 # cursor.execute(query)
 # con.commit()
+
 
 # query = 'kunal'
 # query = query.strip().lower()
