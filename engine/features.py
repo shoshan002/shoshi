@@ -14,9 +14,10 @@ import pyautogui
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from engine.command import speak
 from engine.config import ASSISTANT_NAME
-
+from hugchat import hugchat
 # Playing assiatnt sound function
 import pywhatkit as kit
+
 import pvporcupine
 
 
@@ -177,3 +178,14 @@ def whatsApp(mobile_no, message, flag, name):
 
     pyautogui.hotkey('enter')
     speak(jarvis_message)
+
+def chatBot(query):
+    user_input = query.lower()
+    chatbot = hugchat.ChatBot(cookie_path="engine\\cookies.json")
+    id = chatbot.new_conversation()
+    chatbot.change_conversation(id)
+    response =  chatbot.chat(user_input)
+    # response = ' '.join(r.split()[:40])
+    print(response)
+    speak(response)
+    return response
