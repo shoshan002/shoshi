@@ -52,7 +52,6 @@ $(document).ready(function () {
 
 
     function doc_keyUp(e) {
-        // this would test for whichever key is 40 (down arrow) and the ctrl key at the same time
 
         if (e.key === 'j' && e.metaKey) {
             eel.playAssistantSound()
@@ -79,7 +78,7 @@ $(document).ready(function () {
 
     }
 
-    // toogle fucntion to hide and display mic and send button 
+
     function ShowHideButton(message) {
         if (message.length == 0) {
             $("#MicBtn").attr('hidden', false);
@@ -91,7 +90,7 @@ $(document).ready(function () {
         }
     }
 
-    // key up event handler on text box
+
     $("#chatbox").keyup(function () {
 
         let message = $("#chatbox").val();
@@ -108,7 +107,6 @@ $(document).ready(function () {
     });
     
 
-    // enter press event handler on chat box
     $("#chatbox").keypress(function (e) {
         key = e.which;
         if (key == 13) {
