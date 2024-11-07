@@ -15,7 +15,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from engine.command import speak
 from engine.config import ASSISTANT_NAME
 from hugchat import hugchat
-# Playing assiatnt sound function
+
 import pywhatkit as kit
 import pywhatkit as kit
 import pvporcupine
@@ -41,10 +41,10 @@ def openYouTube():
     
 def openCommand(query):
     query = query.replace(ASSISTANT_NAME, "")
-    query = query.lower().strip()  # Ensure it's in lowercase and trimmed
+    query = query.lower().strip()  
     
     if "youtube" in query:
-        openYouTube()  # Call the YouTube opening function
+        openYouTube()  
         return
 
     app_name = query.replace("open", "").strip()
@@ -86,20 +86,17 @@ def PlayYoutube(query):
 def playSpotify(query):
     search_term = extract_spotify_term(query)
     speak(f"Playing {search_term} on Spotify")
-    # Construct the Spotify search URL
     search_url = f"https://open.spotify.com/search/{search_term}"
     webbrowser.open(search_url)
 
-    time.sleep(5)  # Adjust this depending on your browser speed
+    time.sleep(5)  
     
     # Get screen dimensions
     screen_width, screen_height = pyautogui.size()
     
-    # Calculate coordinates for 50% width and 20% height
     x = screen_width * 0.54
     y = screen_height * 0.56
     
-    # Click on the calculated position
     pyautogui.click(x, y)
 
 
@@ -111,12 +108,10 @@ def hotword():
     audio_stream=None
     try:
        
-        # pre trained keywords    
         porcupine=pvporcupine.create(keywords=["jarvis","alexa"]) 
         paud=pyaudio.PyAudio()
         audio_stream=paud.open(rate=porcupine.sample_rate,channels=1,format=pyaudio.paInt16,input=True,frames_per_buffer=porcupine.frame_length)
         
-        # loop for streaming
         while True:
             keyword=audio_stream.read(porcupine.frame_length)
             keyword=struct.unpack_from("h"*porcupine.frame_length,keyword)
@@ -128,7 +123,7 @@ def hotword():
             if keyword_index>=0:
                 print("hotword detected")
 
-                # pressing shorcut key win+j
+        
                 import pyautogui as autogui
                 autogui.keyDown("win")
                 autogui.press("j")
@@ -235,7 +230,6 @@ def sendMessage(message, mobileNo, name):
     goback(4)
     time.sleep(1)
     keyEvent(3)
-    # open sms app
     tapEvents(136, 2220)
     #start chat
     tapEvents(819, 2192)
