@@ -1,3 +1,4 @@
+
 window.addEventListener("load", windowLoadHandler, false);
 var sphereRad = 140;
 var radius_sp = 1;
@@ -70,19 +71,19 @@ function canvasApp() {
 		wait = 1;
 		count = wait - 1;
 		numToAddEachFrame = 8;
-
-		//particle color
+	
+		// particle color (green)
 		r = 0;
-		g = 72;
-		b = 255;
-
-		rgbString = "rgba(" + r + "," + g + "," + b + ","; //partial string for color which will be completed by appending alpha value.
-		particleAlpha = 1; //maximum alpha
-
+		g = 255;
+		b = 0;
+	
+		rgbString = "rgba(" + r + "," + g + "," + b + ","; // partial string for color which will be completed by appending alpha value.
+		particleAlpha = 1; // maximum alpha
+	
 		displayWidth = theCanvas.width;
 		displayHeight = theCanvas.height;
-
-		fLen = 320; //represents the distance from the viewer to z=0 depth.
+	
+		fLen = 320;//represents the distance from the viewer to z=0 depth.
 
 		//projection center coordinates sets location of origin
 		projCenterX = displayWidth / 2;
@@ -350,3 +351,4 @@ $(function () {
 		}
 	});
 });
+

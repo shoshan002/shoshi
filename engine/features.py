@@ -17,12 +17,10 @@ from engine.config import ASSISTANT_NAME
 from hugchat import hugchat
 # Playing assiatnt sound function
 import pywhatkit as kit
-
+import pywhatkit as kit
 import pvporcupine
-
-
-from engine.helper import extract_yt_term, remove_words
-
+from engine.helper import extract_spotify_term, extract_yt_term, remove_words
+from hugchat import hugchat
 
 con = sqlite3.connect("jarvis.db")
 cursor = con.cursor()
@@ -32,42 +30,49 @@ def playAssistantSound():
     music_dir = "www\\assets\\audio\\start_sound.mp3"
     playsound(music_dir)
 
+def openYouTube():
+    try:
+        speak("Opening YouTube")
+        webbrowser.open("https://www.youtube.com")
+    except Exception as e:
+        speak("Could not open YouTube")
+        print(e)
+
     
 def openCommand(query):
     query = query.replace(ASSISTANT_NAME, "")
-    query = query.replace("open", "")
-    query.lower()
+    query = query.lower().strip()  # Ensure it's in lowercase and trimmed
+    
+    if "youtube" in query:
+        openYouTube()  # Call the YouTube opening function
+        return
 
-    app_name = query.strip()
+    app_name = query.replace("open", "").strip()
 
-    if app_name != "":
-
+    if app_name:
         try:
-            cursor.execute(
-                'SELECT path FROM sys_command WHERE name IN (?)', (app_name,))
+            cursor.execute('SELECT path FROM sys_command WHERE name IN (?)', (app_name,))
             results = cursor.fetchall()
 
             if len(results) != 0:
-                speak("Opening "+query)
+                speak("Opening " + app_name)
                 os.startfile(results[0][0])
-
-            elif len(results) == 0: 
-                cursor.execute(
-                'SELECT url FROM web_command WHERE name IN (?)', (app_name,))
+            else:
+                cursor.execute('SELECT url FROM web_command WHERE name IN (?)', (app_name,))
                 results = cursor.fetchall()
                 
                 if len(results) != 0:
-                    speak("Opening "+query)
+                    speak("Opening " + app_name)
                     webbrowser.open(results[0][0])
-
                 else:
-                    speak("Opening "+query)
+                    speak("Opening " + app_name)
                     try:
-                        os.system('start '+query)
+                        os.system('start ' + app_name)
                     except:
                         speak("not found")
-        except:
-            speak("some thing went wrong")
+        except Exception as e:
+            speak("Something went wrong")
+            print(e)
 
        
 
@@ -75,6 +80,29 @@ def PlayYoutube(query):
     search_term = extract_yt_term(query)
     speak("Playing "+search_term+" on YouTube")
     kit.playonyt(search_term)
+
+
+
+def playSpotify(query):
+    search_term = extract_spotify_term(query)
+    speak(f"Playing {search_term} on Spotify")
+    # Construct the Spotify search URL
+    search_url = f"https://open.spotify.com/search/{search_term}"
+    webbrowser.open(search_url)
+
+    time.sleep(5)  # Adjust this depending on your browser speed
+    
+    # Get screen dimensions
+    screen_width, screen_height = pyautogui.size()
+    
+    # Calculate coordinates for 50% width and 20% height
+    x = screen_width * 0.54
+    y = screen_height * 0.56
+    
+    # Click on the calculated position
+    pyautogui.click(x, y)
+
+
 
 
 def hotword():
@@ -125,7 +153,7 @@ def findContact(query):
 
     try:
         query = query.strip().lower()
-        cursor.execute("SELECT mobile_no FROM contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?", ('%' + query + '%', query + '%'))
+        cursor.execute("SELECT mobile_no FROM my_contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?", ('%' + query + '%', query + '%'))
         results = cursor.fetchall()
         print(results[0][0])
         mobile_number_str = str(results[0][0])
@@ -158,7 +186,6 @@ def whatsApp(mobile_no, message, flag, name):
 
     # Encode the message for URL
     encoded_message = shlex.quote(message)
-
     print(encoded_message)
     # Construct the URL
     whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
@@ -179,13 +206,47 @@ def whatsApp(mobile_no, message, flag, name):
     pyautogui.hotkey('enter')
     speak(jarvis_message)
 
+# chat bot 
 def chatBot(query):
     user_input = query.lower()
     chatbot = hugchat.ChatBot(cookie_path="engine\\cookies.json")
     id = chatbot.new_conversation()
     chatbot.change_conversation(id)
     response =  chatbot.chat(user_input)
-    # response = ' '.join(r.split()[:40])
     print(response)
     speak(response)
     return response
+
+# android automation
+
+def makeCall(name, mobileNo):
+    mobileNo =mobileNo.replace(" ", "")
+    speak("Calling "+name)
+    command = 'adb shell am start -a android.intent.action.CALL -d tel:'+mobileNo
+    os.system(command)
+
+
+# to send message
+def sendMessage(message, mobileNo, name):
+    from engine.helper import replace_spaces_with_percent_s, goback, keyEvent, tapEvents, adbInput
+    message = replace_spaces_with_percent_s(message)
+    mobileNo = replace_spaces_with_percent_s(mobileNo)
+    speak("sending message")
+    goback(4)
+    time.sleep(1)
+    keyEvent(3)
+    # open sms app
+    tapEvents(136, 2220)
+    #start chat
+    tapEvents(819, 2192)
+    # search mobile no
+    adbInput(mobileNo)
+    #tap on name
+    tapEvents(601, 574)
+    # tap on input
+    tapEvents(390, 2270)
+    #message
+    adbInput(message)
+    #send
+    tapEvents(957, 1397)
+    speak("message send successfully to "+name)
